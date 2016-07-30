@@ -74,3 +74,8 @@ def get_events_by_user(event_id):
     return users
 
 
+# Добавить пользователя в список участников события
+def checkin_user(m_user_id, m_event_id):
+    res = UsersEvents.insert(user_id = m_user_id, mevent_id = m_event_id).execute()
+
+

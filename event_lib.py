@@ -1,6 +1,7 @@
 ###### Класс для получения информации о событиях, связанных с заданным исполнителем, в заданном городе
 
 import vk
+import requests
 
 
 # авторизация в vk
@@ -24,7 +25,10 @@ def get_events_from_vk(artist_name, event_city):
     return events
 
 
-
+# Возвращает список похожих исполнителей, используя API Muzis
+def get_similar_artists(artist_name):
+    r = requests.post("http://muzis.ru/api/search.api", data={'q_performer': artist_name})
+    r = requests.post("http://muzis.ru/api/similar_performers.api", data={'number': 12524, 'type': 'issue', 'action': 'show'})
 
 
 
