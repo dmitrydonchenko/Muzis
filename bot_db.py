@@ -67,7 +67,7 @@ def get_user_events(user_id):
 
 
 # Возвращает список участников события
-def get_events_by_user(event_id):
+def get_users_by_event(event_id):
     db.connect()
     users = Users.select().join(UsersEvents.event_id == event_id, UsersEvents.user_id == Users.id)
     db.close()
