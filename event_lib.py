@@ -17,7 +17,7 @@ def get_events_from_vk(artist_name, event_city):
         if isinstance(city, dict):
             if city["title"] == event_city:
                 current_city_id = city["cid"]
-    events = api.groups.search(q = artist_name, type = "event", country_id = 1, city_id = current_city_id)
+    events = api.groups.search(q = artist_name, type = "event", country_id = 1, city_id = current_city_id, future = 1)
     #for event in events:
     #    if isinstance(event, dict):
     #       print(event["name"])
