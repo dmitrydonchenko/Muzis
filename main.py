@@ -1,0 +1,3 @@
+from event_lib import *
+
+get_events_from_vk("pink floyd", "Москва")
