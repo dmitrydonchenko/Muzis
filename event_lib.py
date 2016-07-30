@@ -4,9 +4,10 @@ import vk
 
 
 # авторизация в vk
-#def init():
-session = vk.AuthSession(app_id='5299950', user_login='', user_password='')
+session = vk.AuthSession(app_id='5299950', user_login='89889800727', user_password='VkRentProject420')
 api = vk.API(session)
+
+# получаем список городов России
 cities = api.database.getCities(country_id = 1)
 
 
@@ -20,3 +21,5 @@ def get_events_from_vk(artist_name, event_city):
     for event in events:
         if isinstance(event, dict):
             print(event["name"])
+
+
