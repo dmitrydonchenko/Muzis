@@ -80,6 +80,7 @@ def insert_artist(artist_name):
 
 ######## Методы для получения данных из БД ############
 
+
 # Возвращает список событий, на которые идет пользователь
 def get_user_events(user_id):
     db.connect()

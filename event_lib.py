@@ -29,16 +29,20 @@ def get_events_from_vk(artist_name, event_city):
 
 # Возвращает список похожих исполнителей, используя API Muzis
 def get_similar_artists(artist_name):
-    r = requests.post("http://muzis.ru/api/search.api", data={'q_performer': artist_name})
-    data = r.json()
-    if len(data["performers"]) == 1:
-        performer_id = data["performers"][0]
-        performer_id = performer_id["id"]
-        r = requests.post("http://muzis.ru/api/similar_performers.api", data={'performer_id': performer_id})
+    try:
+        r = requests.post("http://muzis.ru/api/search.api", data={'q_performer': artist_name})
         data = r.json()
-        if len(data["performers"]) > 0:
+        if len(data["performers"]) == 1:
+            performer_id = data["performers"][0]
+            performer_id = performer_id["id"]
+            r = requests.post("http://muzis.ru/api/similar_performers.api", data={'performer_id': performer_id})
+            data = r.json()
             for performer in data["performers"]:
-                print(performer["title"])
+                yield performer["title"]
+        return -1
+    except BaseException as e:
+        print(str(e))
+        return -1
 
 
 
