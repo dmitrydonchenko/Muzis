@@ -89,7 +89,8 @@ def get_user_possible_events(user_id):
     db.connect()
     users_favourite_artists = UsersArtists.select().where(UsersArtists.user_id == user_id)
     for artist in users_favourite_artists:
-        yield Events.select().where(Events.artist_id == artist.artist_id.id).first()
+        for event in Events.select().where(Events.artist_id == artist.artist_id.id):
+            yield event
     db.close()
 
 
