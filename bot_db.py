@@ -87,7 +87,7 @@ def get_user_events(user_id):
     db.connect()
     user_events = Events.select().join(UsersEvents.user_id == user_id, Events.id == UsersEvents.id)
     db.close()
-    return list(user_events)
+    return user_events.get()
 
 
 # Возвращает список участников события
