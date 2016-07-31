@@ -14,6 +14,7 @@ class MySQLModel(peewee.Model):
 class Users(MySQLModel):
     id = peewee.CharField(primary_key=True)   # id пользователя в мессенджере
     user_name = peewee.CharField()            # имя пользователя
+    login = peewee.CharField()
 
 
 # Класс таблицы исполнителей
@@ -47,9 +48,9 @@ class UsersEvents(MySQLModel):
 
 
 # Добавляет нового пользователя в БД
-def insert_user(user_id, name):
+def insert_user(user_id, name, m_login):
     if not is_user_exists(user_id):
-        res = Users.insert(id = user_id, user_name = name).execute()
+        res = Users.insert(id = user_id, user_name = name, login = m_login).execute()
         return res
     return -1
 

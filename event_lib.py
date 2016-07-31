@@ -5,8 +5,6 @@ import requests
 
 # авторизация в vk
 session = vk.AuthSession(app_id='5299950', user_login='89889800727', user_password='VkRentProject420')
-
-#session = vk.AuthSession(app_id='5299950', user_login='89889800727', user_password='VkRentProject420')
 api = vk.API(session)
 
 # получаем список городов России
