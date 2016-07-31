@@ -62,11 +62,6 @@ def insert_event(name, event_url, event_city, artist_name):
     return -1
 
 
-# Добавляет нового участника события
-def insert_user_event(m_user_id, m_event_id):
-    res = UsersEvents.insert(user_id = m_user_id, event_id = m_event_id).execute()
-
-
 # Добавить пользователя в список участников события
 def checkin_user(m_user_id, m_event_id):
     res = UsersEvents.insert(user_id = m_user_id, event_id = m_event_id).execute()
