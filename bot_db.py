@@ -44,6 +44,7 @@ class UsersEvents(MySQLModel):
 
 ############# Методы добавления ################
 
+
 # Добавляет нового пользователя в БД
 def insert_user(user_id, name):
     if not is_user_exists(user_id):
@@ -86,7 +87,7 @@ def get_user_events(user_id):
     db.connect()
     user_events = Events.select().join(UsersEvents.user_id == user_id, Events.id == UsersEvents.id)
     db.close()
-    return user_events
+    return list(user_events)
 
 
 # Возвращает список участников события
