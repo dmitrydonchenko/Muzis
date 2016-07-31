@@ -94,13 +94,12 @@ def get_user_possible_events(user_id):
             yield event
     db.close()
 
-
-# Возвращает список событий, на которые идет пользователь
 def get_user_events(user_id):
-    db.connect()
-    user_events = Events.select(Users, Events, ).join(UsersEvents.user_id == user_id and Events.id == UsersEvents.id)
-    db.close()
-    return user_events.get()
+    res = UsersEvents.select().where(UsersEvents.user_id == user_id)
+    events = []
+    for r in res:
+        events.append(Events.select().where(Events.id == r.event_id).first())
+    return events
 
 
 # Возвращает список участников события
@@ -111,12 +110,17 @@ def get_users_by_event(event_id):
     return users
 
 
+def get_user_by_id(user_id):
+    return Users.select().where(Users.id == user_id).first()
+
 # Возвращает список людей, которые идут на те же события
-def get_soulmates(user_id):
-    user_events = get_user_events(user_id)
-    for event in user_events:
-        for user in get_users_by_event(event.id):
-            yield user
+def get_soulmates(user_id, event_id):
+    users_events = UsersEvents.select().where(UsersEvents.event_id == event_id)
+    users =  []
+    for user_event in users_events:
+        if not user_event.user_id.id == user_id:
+            users.append(get_user_by_id(user_event.user_id.id))
+    return users
 
 
 #Возвращает список любимых исполнителей пользователя
