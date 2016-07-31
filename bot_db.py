@@ -117,6 +117,13 @@ def get_soulmates(user_id):
         for user in get_users_by_event(event.id):
             yield user
 
+
+def get_favourite_artists(user_id):
+    db.connect()
+    users_favourite_artists = UsersArtists.select().where(UsersArtists.user_id == user_id)
+    db.close()
+    return users_favourite_artists
+
 ########## Методы проверки ################
 
 

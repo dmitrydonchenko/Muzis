@@ -2,7 +2,7 @@
 
 import vk
 import requests
-
+from bs4 import BeautifulSoup
 
 # авторизация в vk
 session = vk.AuthSession(app_id='5299950', user_login='89889800727', user_password='VkRentProject420')
@@ -44,6 +44,11 @@ def get_similar_artists(artist_name):
         print(str(e))
         return -1
 
+
+def get_artist_song(artist_name):
+    songs = api.audio.search(q = artist_name)
+    if len(songs) > 0:
+        return songs[0]["url"]
 
 
 
