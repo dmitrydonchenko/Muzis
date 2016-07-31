@@ -34,7 +34,7 @@ class Events(MySQLModel):
 class UsersArtists(MySQLModel):
     id = peewee.BigIntegerField(primary_key=True)
     user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users_artists')
-    artist_id = peewee.ForeignKeyField(Events, db_column='artist_id', to_field='id', related_name='artists_users')
+    artist_id = peewee.ForeignKeyField(Artists, db_column='artist_id', to_field='id', related_name='artists_users')
 
 
 # Класс таблицы пользователей и событий в БД
