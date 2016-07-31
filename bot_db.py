@@ -22,6 +22,7 @@ class Events(MySQLModel):
     event_name = peewee.CharField()
     url = peewee.CharField()
     city = peewee.CharField()
+    artist_id = peewee.ForeignKeyField(Artists, db_column='artist_id', to_field='id', related_name='artists_events')
 
 
 # Класс таблицы исполнителей
@@ -54,9 +55,9 @@ def insert_user(user_id, name):
 
 
 # Добавляет новое событие в БД
-def insert_event(name, event_url, event_city):
+def insert_event(name, event_url, event_city, artist_name):
     if not is_event_exists(event_url):
-        res = Events.insert(event_name = name, url = event_url, city = event_city).execute()
+        res = Events.insert(event_name = name, url = event_url, city = event_city, artist_id = artist_name).execute()
         return res
     return -1
 
@@ -68,7 +69,7 @@ def insert_user_event(m_user_id, m_event_id):
 
 # Добавить пользователя в список участников события
 def checkin_user(m_user_id, m_event_id):
-    res = UsersEvents.insert(user_id = m_user_id, mevent_id = m_event_id).execute()
+    res = UsersEvents.insert(user_id = m_user_id, event_id = m_event_id).execute()
     return res
 
 
@@ -79,13 +80,28 @@ def insert_artist(artist_name):
         return res
     return -1
 
+
+# Добавить исполнителя в список любимых у пользователя
+def insert_user_artist(m_user_id, m_artist_name):
+    res = UsersArtists.insert(user_id = m_user_id, artist_id = m_artist_name).execute()
+    return res
+
 ######## Методы для получения данных из БД ############
+
+
+# Возвращает список событий любимых исполнителей пользователя
+def get_user_possible_events(user_id):
+    db.connect()
+    users_favourite_artists = UsersArtists.select(UsersArtists.artist_id).where(UsersArtists.user_id == user_id)
+    for artist in users_favourite_artists:
+        yield Events.select().where(Events.artist_id == artist.id)
+    db.close()
 
 
 # Возвращает список событий, на которые идет пользователь
 def get_user_events(user_id):
     db.connect()
-    user_events = Events.select().join(UsersEvents.user_id == user_id, Events.id == UsersEvents.id)
+    user_events = Events.select(Users, Events, ).join(UsersEvents.user_id == user_id and Events.id == UsersEvents.id)
     db.close()
     return user_events.get()
 
