@@ -32,15 +32,15 @@ class Artists(MySQLModel):
 # Класс таблицы исполнителей и пользователей
 class UsersArtists(MySQLModel):
     id = peewee.BigIntegerField(primary_key=True)
-    user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users')
-    artist_id = peewee.ForeignKeyField(Events, db_column='artist_id', to_field='id', related_name='artists')
+    user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users_artists')
+    artist_id = peewee.ForeignKeyField(Events, db_column='artist_id', to_field='id', related_name='artists_users')
 
 
 # Класс таблицы пользователей и событий в БД
 class UsersEvents(MySQLModel):
     id = peewee.BigIntegerField(primary_key=True)
-    user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users')
-    event_id = peewee.ForeignKeyField(Events, db_column='event_id', to_field='id', related_name='events')
+    user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users_events')
+    event_id = peewee.ForeignKeyField(Events, db_column='event_id', to_field='id', related_name='events_users')
 
 ############# Методы добавления ################
 
