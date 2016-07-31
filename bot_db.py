@@ -16,6 +16,11 @@ class Users(MySQLModel):
     user_name = peewee.CharField()            # имя пользователя
 
 
+# Класс таблицы исполнителей
+class Artists(MySQLModel):
+    id = peewee.CharField(primary_key=True)
+
+
 # Класс таблицы событий в БД
 class Events(MySQLModel):
     id = peewee.BigIntegerField(primary_key=True)
@@ -23,11 +28,6 @@ class Events(MySQLModel):
     url = peewee.CharField()
     city = peewee.CharField()
     artist_id = peewee.ForeignKeyField(Artists, db_column='artist_id', to_field='id', related_name='artists_events')
-
-
-# Класс таблицы исполнителей
-class Artists(MySQLModel):
-    id = peewee.CharField(primary_key=True)
 
 
 # Класс таблицы исполнителей и пользователей
