@@ -110,6 +110,13 @@ def get_users_by_event(event_id):
     return users
 
 
+# Возвращает список людей, которые идут на те же события
+def get_soulmates(user_id):
+    user_events = get_user_events(user_id)
+    for event in user_events:
+        for user in get_users_by_event(event.id):
+            yield user
+
 ########## Методы проверки ################
 
 
