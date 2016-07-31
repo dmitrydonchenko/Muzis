@@ -87,9 +87,9 @@ def insert_user_artist(m_user_id, m_artist_name):
 # Возвращает список событий любимых исполнителей пользователя
 def get_user_possible_events(user_id):
     db.connect()
-    users_favourite_artists = UsersArtists.select(UsersArtists.artist_id).where(UsersArtists.user_id == user_id)
+    users_favourite_artists = UsersArtists.select().where(UsersArtists.user_id == user_id)
     for artist in users_favourite_artists:
-        yield list(Events.select().where(Events.artist_id == artist.id))
+        yield Events.select().where(Events.artist_id == artist.id)
     db.close()
 
 
