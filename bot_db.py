@@ -118,6 +118,7 @@ def get_soulmates(user_id):
             yield user
 
 
+#Возвращает список любимых исполнителей пользователя
 def get_favourite_artists(user_id):
     db.connect()
     users_favourite_artists = UsersArtists.select().where(UsersArtists.user_id == user_id)
