@@ -62,8 +62,9 @@ def callback_buttons(call):
 def checkin_events(message):
     keyboard = telebot.types.InlineKeyboardMarkup()
     for event in bot_db.get_user_possible_events(message.chat.id):
-        callback_button = telebot.types.InlineKeyboardButton(text=event.event_name, callback_data=str(event.id))
-        keyboard.add(callback_button)
+        if event.city == get_location(message.chat.id):
+            callback_button = telebot.types.InlineKeyboardButton(text=event.event_name, callback_data=str(event.id))
+            keyboard.add(callback_button)
 
     bot.send_message(message.chat.id, 'На какое из следующих событий ты хочешь пойти?', reply_markup = keyboard)
 
@@ -71,7 +72,7 @@ def checkin_events(message):
 def get_possible_events(message):
     keyboard = telebot.types.InlineKeyboardMarkup()
     for event in bot_db.get_user_possible_events(str(message.chat.id)):
-        if event != None:
+        if event.city == get_location(message.chat.id):
             callback_button = telebot.types.InlineKeyboardButton(text=event.event_name, url=event.url)
             keyboard.add(callback_button)
 
@@ -94,6 +95,12 @@ def handle_dialog(message):
         # with shelve.open(config.location_db) as db:
         #     db[message.chat.id] = message.text
         set_location(message.chat.id, message.text)
+        artists = bot_db.get_favourite_artists(message.chat.id)
+        for artist in artists:
+            events = event_lib.get_events_from_vk(artist.artist_id.id, message.text)
+            for event in events:
+                url = 'vk.com/' + event['screen_name']
+                bot_db.insert_event(event['name'], url, message.text, artist.artist_id.id)
         bot.send_message(message.chat.id, 'Я запомню :)')
         bot.send_message(message.chat.id, 'Ты всегда можешь изменить свой город командой /setLocation', parse_mode="Markdown")
     elif (bot_state == BotStates.CheckinEvents):
