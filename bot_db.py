@@ -24,23 +24,40 @@ class Events(MySQLModel):
     city = peewee.CharField()
 
 
+# Класс таблицы исполнителей
+class Artists(MySQLModel):
+    id = peewee.CharField(primary_key=True)
+
+
+# Класс таблицы исполнителей и пользователей
+class UsersArtists(MySQLModel):
+    id = peewee.BigIntegerField(primary_key=True)
+    user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users')
+    artist_id = peewee.ForeignKeyField(Events, db_column='artist_id', to_field='id', related_name='artists')
+
+
 # Класс таблицы пользователей и событий в БД
 class UsersEvents(MySQLModel):
     id = peewee.BigIntegerField(primary_key=True)
     user_id = peewee.ForeignKeyField(Users, db_column='user_id', to_field='id', related_name='users')
     event_id = peewee.ForeignKeyField(Events, db_column='event_id', to_field='id', related_name='events')
 
+############# Методы добавления ################
 
 # Добавляет нового пользователя в БД
 def insert_user(user_id, name):
-    res = Users.insert(id = user_id, user_name = name).execute()
-    return res
+    if not is_user_exists(user_id):
+        res = Users.insert(id = user_id, user_name = name).execute()
+        return res
+    return -1
 
 
 # Добавляет новое событие в БД
 def insert_event(name, event_url, event_city):
-    res = Events.insert(event_name = name, url = event_url, city = event_city).execute()
-    return res
+    if not is_event_exists(event_url):
+        res = Events.insert(event_name = name, url = event_url, city = event_city).execute()
+        return res
+    return -1
 
 
 # Добавляет нового участника события
@@ -48,15 +65,20 @@ def insert_user_event(m_user_id, m_event_id):
     res = UsersEvents.insert(user_id = m_user_id, event_id = m_event_id).execute()
 
 
-# Возвращает True, если событие с данным url уже есть в БД
-def is_event_exist(event_url):
-    db.connect()
-    if (Events.select().where(Events.url == event_url)).count() > 0:
-        db.close()
-        return True
-    db.close()
-    return False
+# Добавить пользователя в список участников события
+def checkin_user(m_user_id, m_event_id):
+    res = UsersEvents.insert(user_id = m_user_id, mevent_id = m_event_id).execute()
+    return res
 
+
+# Добавить исполнителя
+def insert_artist(artist_name):
+    if not is_artist_exists(artist_name):
+        res = Artists.insert(id = artist_name).execute()
+        return res
+    return -1
+
+######## Методы для получения данных из БД ############
 
 # Возвращает список событий, на которые идет пользователь
 def get_user_events(user_id):
@@ -74,8 +96,36 @@ def get_users_by_event(event_id):
     return users
 
 
-# Добавить пользователя в список участников события
-def checkin_user(m_user_id, m_event_id):
-    res = UsersEvents.insert(user_id = m_user_id, mevent_id = m_event_id).execute()
+########## Методы проверки ################
+
+
+# Возвращает True, если исполнитель с таким именем уже существует
+def is_artist_exists(artist_name):
+    db.connect()
+    if (Artists.select().where(Artists.id == artist_name)).count() > 0:
+        db.close()
+        return True
+    db.close()
+    return False
+
+
+# Возвращает True, если событие с данным url уже есть в БД
+def is_event_exists(event_url):
+    db.connect()
+    if (Events.select().where(Events.url == event_url)).count() > 0:
+        db.close()
+        return True
+    db.close()
+    return False
+
+
+# Возвращает True, если пользователь с таким id уже существует
+def is_user_exists(user_id):
+    db.connect()
+    if (Users.select().where(Users.id == user_id)).count() > 0:
+        db.close()
+        return True
+    db.close()
+    return False
 
 
