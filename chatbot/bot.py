@@ -52,22 +52,30 @@ def set_user_location(message):
     #     db[message.chat.id] = BotStates.SetLocation
     set_bot_state(message.chat.id, BotStates.SetLocation)
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback_buttons(call):
+    if call.message:
+        bot_db.checkin_user(call.message.chat.id, int(call.data))
+        bot.send_message(call.message.chat.id, 'Поздравляю! Ты идёшь на выбранное событие')
+
 @bot.message_handler(commands=["checkinEvents"])
 def checkin_events(message):
-    bot.send_message(message.chat.id, 'Напиши через запятую, на какие из следующих событий ты хочешь пойти:')
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    for event in bot_db.get_user_possible_events(message.chat.id):
+        callback_button = telebot.types.InlineKeyboardButton(text=event.event_name, callback_data=str(event.id))
+        keyboard.add(callback_button)
 
-    events = bot_db.get_user_possible_events(message.chat.id)
-    for event in events:
-        bot.send_message(message.chat.id, event.url)
-
-    with shelve.open(config.bot_state_db) as db:
-        db[message.chat.id] = BotStates.CheckinEvents
+    bot.send_message(message.chat.id, 'На какое из следующих событий ты хочешь пойти?', reply_markup = keyboard)
 
 @bot.message_handler(commands=["getPossibleEvents"])
 def get_possible_events(message):
+    keyboard = telebot.types.InlineKeyboardMarkup()
     for event in bot_db.get_user_possible_events(str(message.chat.id)):
         if event != None:
-            bot.send_message(message.chat.id, event.url)
+            callback_button = telebot.types.InlineKeyboardButton(text=event.event_name, url=event.url)
+            keyboard.add(callback_button)
+
+    bot.send_message(message.chat.id, 'Нажми на событие, чтобы узнать о нём поподробнее', reply_markup = keyboard)
 
 
 @bot.message_handler(content_types=["text"])
@@ -88,6 +96,8 @@ def handle_dialog(message):
         set_location(message.chat.id, message.text)
         bot.send_message(message.chat.id, 'Я запомню :)')
         bot.send_message(message.chat.id, 'Ты всегда можешь изменить свой город командой /setLocation', parse_mode="Markdown")
+    elif (bot_state == BotStates.CheckinEvents):
+        pass
 
     set_bot_state(message.chat.id, BotStates.Waiting)
 
