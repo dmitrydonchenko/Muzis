@@ -29,7 +29,17 @@ help_string.append('/getSimilarArtists - найти исполнителей, к
 
 @bot.message_handler(commands=["start"])
 def greetings(message):
-    bot_db.insert_user(str(message.from_user.id), message.from_user.first_name + ' ' + message.from_user.last_name, message.from_user.username)
+    first_name = ""
+    last_name = ""
+    login = ""
+    if (message.from_user.first_name != None):
+        first_name = message.from_user.first_name
+    if (message.from_user.last_name != None):
+        last_name = message.from_user.last_name
+    if (message.from_user.username != None):
+        login = message.from_user.username
+
+    bot_db.insert_user(str(message.from_user.id), first_name + ' ' + last_name, login)
     bot.send_message(message.chat.id, 'Привет! Я бот, соединяющий души.')
     greetings(message)
     if get_location(message.chat.id) == None:
@@ -61,7 +71,8 @@ def find_soulmates(message):
     for event in events:
         soulmates = bot_db.get_soulmates(str(message.chat.id), event.id)
         for soulmate in soulmates:
-            bot.send_message(message.chat.id, '@' + soulmate.login)
+            if soulmate.login != None:
+                bot.send_message(message.chat.id, '@' + soulmate.login)
     # with shelve.open(config.bot_state_db) as db:
     #     db[message.chat.id] = BotStates.AddingArtists
 
@@ -128,7 +139,6 @@ def handle_dialog(message):
             for event in events:
                 url = 'vk.com/' + event['screen_name']
                 bot_db.insert_event(event['name'], url, message.text, artist.artist_id.id)
-        bot.send_message(message.chat.id, 'Я запомню :)')
         bot.send_message(message.chat.id, 'Ты всегда можешь изменить свой город командой /setLocation', parse_mode="Markdown")
         bot.send_message(message.chat.id, 'А посмотреть список музыкальных событий в городе можно командой /getPossibleEvents',
                          parse_mode="Markdown")

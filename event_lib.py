@@ -26,7 +26,6 @@ def get_events_from_vk(artist_name, event_city):
     #       print(event["name"])
     return events
 
-
 # Возвращает список похожих исполнителей, используя API Muzis
 def get_similar_artists(artist_name):
     try:
