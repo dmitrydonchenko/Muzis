@@ -82,6 +82,14 @@ def insert_user_artist(m_user_id, m_artist_name):
     res = UsersArtists.insert(user_id = m_user_id, artist_id = m_artist_name).execute()
     return res
 
+
+def get_user_events(user_id):
+    res = UsersEvents.select().where(UsersEvents.user_id == user_id)
+    events = []
+    for r in res:
+        events.append(Events.select().where(Events.id == r.event_id))
+    return events
+
 ######## Методы для получения данных из БД ############
 
 

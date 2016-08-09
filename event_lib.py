@@ -4,7 +4,7 @@ import vk
 import requests
 
 # авторизация в vk
-session = vk.AuthSession(app_id='5299950', user_login='89889800727', user_password='VkRentProject420')
+session = vk.AuthSession(app_id='5299950', user_login='89889800727', user_password='')
 api = vk.API(session)
 
 # получаем список городов России
@@ -45,9 +45,23 @@ def get_similar_artists(artist_name):
 
 
 def get_artist_song(artist_name):
-    songs = api.audio.search(q = artist_name, oauth = "RjEWmZ4dWmjQrlrLwa7G")
-    if len(songs) > 0:
-        return songs[0]["url"]
+    try:
+        r = requests.post("http://muzis.ru/api/search.api", data={'q_performer': artist_name})
+        data = r.json()
+        if len(data["performers"]) == 1:
+            performer_id = data["performers"][0]
+            performer_id = performer_id["id"]
+            r = requests.post("http://muzis.ru/api/get_songs_by_performer.api", data={'performer_id': performer_id})
+            data = r.json()
+            songs = data["songs"]
+            if len(songs) > 0:
+                filename = songs[0]["file_mp3"]
+                r = requests.get("http://f.muzis.ru/" + filename)
+                data = r.json()
+        return -1
+    except BaseException as e:
+        print(str(e))
+        return -1
 
 
 
